@@ -126,8 +126,9 @@ def add_comment(request, post_id):
 def follow_index(request):
     template = 'posts/follow.html'
     posts = Post.objects.filter(author__following__user=request.user)
+    page_obj = my_pagin(posts, request)
     context = {
-        "page_obj": posts
+        "page_obj": page_obj
     }
     return render(request, template, context)
 
@@ -135,9 +136,8 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    following_authors = author.follower.filter(user=request.user)
-    if (request.user != author) and (author not in following_authors):
-        Follow.objects.create(
+    if request.user != author:
+        Follow.objects.get_or_create(
             user=request.user,
             author=author
         )

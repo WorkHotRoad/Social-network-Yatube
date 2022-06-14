@@ -357,20 +357,17 @@ class FollowTests(TestCase):
         response = self.authorized_client2.get(
             reverse('posts:follow_index')
         )
-        self.assertTrue(
-            response.context['page_obj'].filter(
-                author=self.user1,
-                text='Тестовая пост0'
-            ).exists()
+        post_follow = response.context.get('page_obj')[0]
+        self.assertEqual(
+            post_follow, self.post1,
+            'Не найден новый пост в ленте подписчика'
         )
-        response2 = self.authorized_client3.get(
+        response = self.authorized_client3.get(
             reverse('posts:follow_index')
         )
-        self.assertFalse(
-            response2.context['page_obj'].filter(
-                author=self.user1,
-                text='Тестовая пост0'
-            ).exists()
+        self.assertEqual(
+            len(response.context['page_obj']), 0,
+            'найден лишний пост в ленте подписчика'
         )
 
 
