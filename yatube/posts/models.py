@@ -90,3 +90,9 @@ class Follow(models.Model):
         null=True,
         verbose_name="Имя автора"
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'author'],
+            name='Unique entry')
+        ]
